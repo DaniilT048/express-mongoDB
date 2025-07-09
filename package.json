@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "test": "set NODE_OPTIONS=--openssl-legacy-provider && npm run dev"
   },
   "keywords": [],
   "author": "",

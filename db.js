@@ -1,19 +1,18 @@
-import { MongoClient } from 'mongodb'
-import dotenv from 'dotenv'
+import { MongoClient } from 'mongodb';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 const MONGO_CONNECTION = process.env.MONGO_CONNECTION;
 const client = new MongoClient(MONGO_CONNECTION);
 
-export let db;
+let db;
 
 export async function dbConnect() {
-    try {
+    if (!db) {
         await client.connect();
-
         db = client.db('sample_mflix');
-    } catch (error) {
-        console.error('Error:', error);
+        console.log('Connected to MongoDB');
     }
+    return db;
 }

@@ -9,9 +9,23 @@ import cookieParser from 'cookie-parser';
 import {users, addUser, findUserByEmailAndPassword, findUserByEmail} from '../services/usersServices.js';
 import passport from "passport";
 import { Strategy as LocalStrategy } from 'passport-local';
+import {dbConnect} from "../db.js";
 
 const PORT = 4000;
 const app = express();
+
+async function startServer() {
+    try {
+        await dbConnect();
+
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+startServer();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -77,15 +91,25 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/articles', requireAuth, (req, res) => {
-    const articles = getArticles();
-    res.render('articles', { articles } );
-})
+app.get('/articles', requireAuth, async (req, res) => {
+    try {
+        const articles = await getArticles();
+        res.render('articles', { articles });
+    } catch (err) {
+        console.error( err);
+        res.status(500).send('Error when receiving articles');
+    }
+});
 
-app.get('/articles/:id', requireAuth, (req, res) => {
-    const article = getArticleById(req.params.id);
-    if (!article) return res.status(404).send('Article is not found');
-    res.render('article', { article });
+app.get('/articles/:id', requireAuth, async (req, res) => {
+    try {
+        const article = await getArticleById(req.params.id);
+        if (!article) return res.status(404).send('Article not found');
+        res.render('article', { article });
+    } catch (err) {
+        console.error('Error when receiving articles', err);
+        res.status(500).send('Error server');
+    }
 });
 
 app.get('/set-theme/:theme', (req, res) => {
@@ -135,8 +159,3 @@ app.get('/logout', (req, res) => {
     });
 });
 
-
-
-app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
-})
