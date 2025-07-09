@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Articles</title>
+    <link rel="stylesheet" href="/styles-<%=`${theme}`%>.css" />
+</head>
+<body>
+<h1>Articles</h1>
+<a href="/set-theme/light">Light theme</a>
+<a href="/set-theme/dark">Dark theme</a>
+    <% if (articles && articles.length > 0) { %>
+        <% articles.forEach(article => { %>
+            <div class="article-card">
+                <h2><%= article.title %></h2>
+                <p><%= article.author %>...</p>
+                <a href="/articles/<%= article.id %>">Read more</a>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>Articles not found</p>
+    <% } %>
+<a href="/logout">Exit</a>
+</body>
+</html>

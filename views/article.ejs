@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Article</title>
+    <link rel="stylesheet" href="/styles-<%=`${theme}`%>.css" />
+</head>
+<body>
+
+<div class="article-page">
+    <a href="/set-theme/light">Light theme</a>
+    <a href="/set-theme/dark">Dark theme</a>
+    <h1><%= article.title %></h1>
+    <p><%= article.author %></p>
+    <a href=<%= article.url %>>Click</a>
+    <div>
+        <a href="/articles/">Back to list</a>
+    </div>
+</div>
+</body>
+</html>

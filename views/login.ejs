@@ -1,0 +1,12 @@
+<% if (message) { %>
+    <div style="background: #ffdddd; color: #a00; padding: 10px; border: 1px solid #a00; border-radius: 4px; margin-bottom: 10px;">
+        <%= message %>
+    </div>
+<% } %>
+<h1>Login</h1>
+<form method="POST" action="/login">
+    <input name="email" type="email" placeholder="Email" required />
+    <input name="password" type="password" placeholder="Password" required />
+    <button type="submit">Login</button>
+</form>
+<a href="/register">Register</a>
