@@ -1,5 +1,5 @@
 {
-  "name": "home-work-63-ejs",
+  "name": "home-work-64-mongo",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -13,9 +13,11 @@
   "dependencies": {
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dotenv": "^17.1.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
+    "mongodb": "^6.17.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "serve-favicon": "^2.5.1"
