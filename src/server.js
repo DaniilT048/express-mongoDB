@@ -6,7 +6,7 @@ import {getArticleById, getArticles} from "../services/articlesServices.js";
 import favicon from 'serve-favicon';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
-import {users, addUser, findUserByEmailAndPassword, findUserByEmail} from '../services/usersServices.js';
+import {addUser, findUserByEmailAndPassword, findUserByEmail} from '../services/usersServices.js';
 import passport from "passport";
 import { Strategy as LocalStrategy } from 'passport-local';
 import {dbConnect} from "../db.js";
@@ -56,12 +56,16 @@ app.use(passport.session());
 
 passport.use(new LocalStrategy(
     { usernameField: 'email' },
-    (email, password, done) => {
-        const user = findUserByEmailAndPassword(email, password);
-        if (!user) {
-            return done(null, false, { message: 'Неверный email или пароль' });
+    async (email, password, done) => {
+        try {
+            const user = await findUserByEmailAndPassword(email, password);
+            if (!user) {
+                return done(null, false, { message: 'Invalid email or password' });
+            }
+            return done(null, user);
+        } catch (err) {
+            return done(err);
         }
-        return done(null, user);
     }
 ));
 
@@ -69,12 +73,12 @@ passport.serializeUser((user, done) => {
     done(null, user.email);
 });
 
-passport.deserializeUser((email, done) => {
-    const user = findUserByEmail(email);
-    if (user) {
-        done(null, user);
-    } else {
-        done(null, false);
+passport.deserializeUser(async (email, done) => {
+    try {
+        const user = await findUserByEmail(email);
+        done(null, user || false);
+    } catch (err) {
+        done(err);
     }
 });
 
@@ -87,13 +91,12 @@ function requireAuth(req, res, next) {
 }
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('index', { theme: res.locals.theme });
 });
 
-app.get('/articles', async (req, res) => {
+app.get('/articles', requireAuth, async (req, res) => {
     try {
         const articles = await getArticles();
-        console.log(articles)
         res.render('articles', { articles });
     } catch (err) {
         console.error( err);
@@ -101,7 +104,7 @@ app.get('/articles', async (req, res) => {
     }
 });
 
-app.get('/articles/:id', async (req, res) => {
+app.get('/articles/:id', requireAuth, async (req, res) => {
     try {
         const article = await getArticleById(req.params.id);
         if (!article) return res.status(404).send('Article not found');
@@ -127,31 +130,38 @@ app.get('/register', (req, res) => {
     res.render('register');
 });
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return res.send('Name or password are required');
     }
-    if (findUserByEmail(email)) {
+    const existingUser = await findUserByEmail(email)
+    if (existingUser) {
         return res.send('User is already exist');
     }
-    addUser(email, password);
+    await addUser(email, password);
     res.redirect('/login');
 });
 
-app.get('/login', (req, res) => {
+app.get('/login',(req, res) => {
     const message = req.session.message;
     req.session.message = null;
     res.render('login', { theme: res.locals.theme, message });
 });
 
-app.post('/login',
-    passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/login',
-        failureMessage: true
-    })
-);
+app.post('/login', async (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) return next(err);
+        if (!user) {
+            req.session.message = 'Invalid email or password';
+            return res.redirect('/login');
+        }
+        req.logIn(user, err => {
+            if (err) return next(err);
+            return res.redirect('/');
+        });
+    })(req, res, next);
+});
 
 app.get('/logout', (req, res) => {
     req.logout(() => {
