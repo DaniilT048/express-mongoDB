@@ -25,7 +25,6 @@ async function startServer() {
         console.error('Error:', error);
     }
 }
-startServer();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -91,9 +90,10 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/articles', requireAuth, async (req, res) => {
+app.get('/articles', async (req, res) => {
     try {
         const articles = await getArticles();
+        console.log(articles)
         res.render('articles', { articles });
     } catch (err) {
         console.error( err);
@@ -101,7 +101,7 @@ app.get('/articles', requireAuth, async (req, res) => {
     }
 });
 
-app.get('/articles/:id', requireAuth, async (req, res) => {
+app.get('/articles/:id', async (req, res) => {
     try {
         const article = await getArticleById(req.params.id);
         if (!article) return res.status(404).send('Article not found');
@@ -159,3 +159,4 @@ app.get('/logout', (req, res) => {
     });
 });
 
+startServer();

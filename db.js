@@ -6,7 +6,7 @@ dotenv.config();
 const MONGO_CONNECTION = process.env.MONGO_CONNECTION;
 const client = new MongoClient(MONGO_CONNECTION);
 
-let db;
+export let db;
 
 export async function dbConnect() {
     if (!db) {
