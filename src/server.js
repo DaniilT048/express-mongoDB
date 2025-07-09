@@ -9,7 +9,7 @@ import cookieParser from 'cookie-parser';
 import {addUser, findUserByEmailAndPassword, findUserByEmail} from '../services/usersServices.js';
 import passport from "passport";
 import { Strategy as LocalStrategy } from 'passport-local';
-import {dbConnect} from "../db.js";
+import {dbConnect} from "./db.js";
 
 const PORT = 4000;
 const app = express();

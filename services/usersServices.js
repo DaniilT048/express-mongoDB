@@ -1,4 +1,4 @@
-import { db } from '../db.js';
+import { db } from '../src/db.js';
 
 export async function findUserByEmail(email) {
     const users = db.collection('users');

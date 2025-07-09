@@ -1,4 +1,4 @@
-import {db, dbConnect } from '../db.js';
+import {db, dbConnect } from '../src/db.js';
 import { ObjectId } from 'mongodb';
 
 export async function getArticles() {
