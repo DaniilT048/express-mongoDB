@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/styles-<%=`${theme}`%>.css" />
 </head>
 <body>
-<h1>Hello world!</h1>
+<h1>Hello <%= email || 'World' %>!</h1>
 <a href="/set-theme/light">Light theme</a>
 <a href="/set-theme/dark">Dark theme</a>
 <nav>

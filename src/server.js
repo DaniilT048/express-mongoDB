@@ -91,7 +91,7 @@ function requireAuth(req, res, next) {
 }
 
 app.get('/', (req, res) => {
-    res.render('index', { theme: res.locals.theme });
+    res.render('index', { theme: res.locals.theme,  email: req.user?.email || null });
 });
 
 app.get('/articles', requireAuth, async (req, res) => {
@@ -165,7 +165,7 @@ app.post('/login', async (req, res, next) => {
 
 app.get('/logout', (req, res) => {
     req.logout(() => {
-        res.redirect('/login');
+        res.redirect('/');
     });
 });
 
