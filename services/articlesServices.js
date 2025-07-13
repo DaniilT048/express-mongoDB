@@ -1,4 +1,4 @@
-import {db, dbConnect } from '../src/db.js';
+import {db } from '../src/db.js';
 import { ObjectId } from 'mongodb';
 
 export async function getArticles() {
@@ -12,4 +12,9 @@ export async function getArticleById(id) {
     }
     const articlesCollection = db.collection('articles');
     return await articlesCollection.findOne({ _id: new ObjectId(id) });
+}
+
+export async function createArticle({ title, author }) {
+    const articlesCollection = db.collection('articles');
+    return await articlesCollection.insertOne({ title, author });
 }

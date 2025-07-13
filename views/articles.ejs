@@ -6,7 +6,15 @@
     <link rel="stylesheet" href="/styles-<%=`${theme}`%>.css" />
 </head>
 <body>
-<h1>Articles</h1>
+<h1>Make new article</h1>
+<div>
+    <form action="/articles" method="POST">
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="text" name="author" placeholder="Author" required>
+        <button type="submit">Add Article</button>
+    </form>
+</div>
+<h1>Articles:</h1>
 <a href="/set-theme/light">Light theme</a>
 <a href="/set-theme/dark">Dark theme</a>
     <% if (articles && articles.length > 0) { %>

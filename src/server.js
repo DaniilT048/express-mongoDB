@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import {getArticleById, getArticles} from "../services/articlesServices.js";
+import {createArticle, getArticleById, getArticles} from "../services/articlesServices.js";
 import favicon from 'serve-favicon';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
@@ -112,6 +112,22 @@ app.get('/articles/:id', requireAuth, async (req, res) => {
     } catch (err) {
         console.error('Error when receiving articles', err);
         res.status(500).send('Error server');
+    }
+});
+
+app.post('/articles', requireAuth, async (req, res) => {
+    const { title, author } = req.body;
+
+    if (!title || !author) {
+        return res.status(400).send('Title and author are required');
+    }
+
+    try {
+        await createArticle({ title, author });
+        res.redirect('/articles');
+    } catch (err) {
+        console.error('Error creating article:', err);
+        res.status(500).send('Server error');
     }
 });
 
