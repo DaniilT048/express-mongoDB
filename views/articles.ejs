@@ -15,14 +15,19 @@
     </form>
 </div>
 <h1>Articles:</h1>
+
 <a href="/set-theme/light">Light theme</a>
 <a href="/set-theme/dark">Dark theme</a>
     <% if (articles && articles.length > 0) { %>
         <% articles.forEach(article => { %>
             <div class="article-card">
+                <a href="/articles/<%= article._id %>/edit">Edit</a>
                 <h2><%= article.title %></h2>
                 <p><%= article.author %>...</p>
                 <a href="/articles/<%= article._id %>">Read more</a>
+                <form action="/articles/<%= article._id %>/delete" method="POST" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Delete this article?')">Delete</button>
+                </form>
             </div>
         <% }) %>
     <% } else { %>

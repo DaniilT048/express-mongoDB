@@ -2,7 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import {createArticle, getArticleById, getArticles} from "../services/articlesServices.js";
+import {
+    createArticle,
+    deleteArticleById,
+    getArticleById,
+    getArticles,
+    updateArticleById
+} from "../services/articlesServices.js";
 import favicon from 'serve-favicon';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
@@ -131,6 +137,33 @@ app.post('/articles', requireAuth, async (req, res) => {
     }
 });
 
+app.post('/articles/:id/delete', requireAuth, async (req, res) => {
+    try {
+        await deleteArticleById(req.params.id);
+        res.redirect('/articles');
+    } catch (err) {
+        console.error('Error deleting article:', err);
+        res.status(500).send('Error deleting article');
+    }
+});
+
+app.get('/articles/:id/edit', requireAuth, async (req, res) => {
+    const article = await getArticleById(req.params.id);
+    if (!article) return res.status(404).send('Article not found');
+    res.render('editArticle', { article });
+});
+
+app.post('/articles/:id/edit', requireAuth, async (req, res) => {
+    const { title, author } = req.body;
+    try {
+        await updateArticleById(req.params.id, { title, author });
+        res.redirect('/articles');
+    } catch (err) {
+        console.error('Error editing article:', err);
+        res.status(500).send('Error editing article');
+    }
+});
+
 app.get('/set-theme/:theme', (req, res) => {
     const { theme } = req.params;
 
@@ -166,7 +199,7 @@ app.get('/login',(req, res) => {
 });
 
 app.post('/login', async (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
+    passport.authenticate('local', (err, user) => {
         if (err) return next(err);
         if (!user) {
             req.session.message = 'Invalid email or password';
